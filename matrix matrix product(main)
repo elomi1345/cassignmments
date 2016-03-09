@@ -1,0 +1,36 @@
+#include<vector>
+#include "head.h"
+#include<iostream>
+
+using namespace std;
+void main(){
+
+matrixoperation mo;
+matrixoperation Mat2;
+
+cout<<"enter number of rows matrix1:"<<M<<
+     <<"enter number of columns matrix 1"<<N;
+
+vector<vector<double>> mat1=mo.matrixdim(int M,int N );
+
+vector<vector<double>> mat2=mo.matrixdim(int M,int N );
+cout<<"enter number of rows matrix2:"<<M<<
+     <<"enter number of columns matrix 2:"<<N;
+     
+     
+     cout<<"enter elemnts of matrix1"<<
+     
+     for (i=0; i<M*N ++i){
+        
+        cin>>mat1;
+        
+     }
+     
+ cout<<"enter elemnts of matrix1"<<
+     
+     for (i=0; i<M*N ++i){
+        
+        cin>>mat2;
+        
+     }
+}
