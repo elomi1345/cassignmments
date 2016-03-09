@@ -1,12 +1,16 @@
 
+
 # pragma once //Specifies that the file will be included (opened) only once by the compiler when compiling a source code file.
 
-#include<vector>
+#include <vector>
+using namespace std;
 
-class matrixoperation{
+class matrixoperation
+{
   
   public: 
-      vector<vector<double>> matrixdim(int M, int N);
-      vector<vector<double>> multmatrix(vector<vector<double>> mat1, vector<vector<double>> mat2);
+      vector<vector<double> > matrixdim(int M, int N);
+     vector<vector<double> > multmatrix(vector<vector<double> > mat1, vector<vector<double> > mat2);
 
 };
+
