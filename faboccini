@@ -1,0 +1,50 @@
+
+#include<iostream>
+ #include<vector>
+ #include<string>
+ #include <iomanip>
+#include <locale>
+#include <sstream>
+#include <algorithm>
+using namespace std;
+ 
+string fibonacci(int n)
+{
+   int c, first = 0, second = 1, next;
+   string next2;
+   
+ 
+  // cout << "Enter the number of terms of Fibonacci series you want" << endl;
+ //  cin >> n;
+ 
+   cout << "First " << n << " terms of Fibonacci series are :- " << endl;
+ 
+   for ( c = 0 ; c < n ; c++ )
+   {
+      if ( c <= 1 )
+         next = c;
+      else
+      {
+         next = first + second;
+         first = second;
+         second = next;
+         ostringstream convert;
+         convert << next;
+         next2 = convert.str();
+         vector<string>d;
+         d.push_back(next2);
+         sort(d.begin(),d.end());
+         cout << d[0] ;
+      }
+     // cout << d[n] << endl;
+     // cout << next << endl;
+   }
+
+ 
+   return 0;
+}
+
+int main(){
+
+fibonacci(10);
+}
