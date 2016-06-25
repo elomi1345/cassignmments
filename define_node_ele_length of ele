@@ -1,0 +1,39 @@
+import numpy as np
+import math
+nodes=np.genfromtxt('coordinate.txt', delimiter=' ', names=True)
+xcord=nodes['x']
+ycord=nodes['y']
+zcord=nodes['z']
+elements=np.genfromtxt('elements.txt', delimiter=' ', names=True)
+node1=elements['node1']
+node2=elements['node2']
+node3=elements['node3']
+node4=elements['node4']
+numelem=len(elements['node1'])
+numnodes=len(xcord)
+
+for i in range(numelem):
+    x1=xcord[node1[i]-1]
+    y1=ycord[node1[i]-1]    
+    z1=zcord[node1[i]-1]
+#element2
+    x2=xcord[node2[i]-1]
+    y2=ycord[node2[i]-1]    
+    z2=zcord[node2[i]-1]
+#element3
+    x3=xcord[node3[i]-1]
+    y3=ycord[node3[i]-1]    
+    z3=zcord[node3[i]-1]
+#element4
+    x4=xcord[node4[i]-1]
+    y4=ycord[node4[i]-1]    
+    z4=zcord[node4[i]-1]
+    dx1=math.sqrt((x2-x1)**2)
+    dx2=math.sqrt((x3-x2)**2)
+    dx3=math.sqrt((x3-x4)**2)
+    dx4=math.sqrt((x4-x1)**2)
+    #print(dx1)
+    #print(dx2)
+    #print(dx3)
+    #print(dx4)
+
