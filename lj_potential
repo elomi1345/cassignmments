@@ -1,0 +1,41 @@
+import math
+import numpy as np
+n=0
+rcut=5
+
+nodes=np.genfromtxt('coordinate.txt', delimiter=' ', names=True)
+xcord=nodes['x']
+ycord=nodes['y']
+zcord=nodes['z']
+numnodes=len(xcord)
+xnode=[]#create an empty list first
+ynode=[]#create an empty list first
+znode=[]
+for i in range(numnodes):
+        xnode.append([0]*numnodes)#And again append empty lists to original list
+        ynode.append(1)
+        znode.append(1)
+        xnode[n]=xcord[i]    
+        ynode[n]=ycord[i]
+        znode[n]=zcord[i]
+        n=n+1
+elements=np.genfromtxt('elements.txt', delimiter=' ', names=True)
+node1=elements['Node1']
+node2=elements['Node2']
+node3=elements['Node3']
+node4=elements['Node4']
+numelem=len(elements['Node1'])
+for i in range(numelem):
+    for j in range(numnodes):
+        if math.sqrt((xnode[j]-xnode[int(node1[i])])**2+(ynode[j]-ynode[int(node1[i])])**2)<rcut:
+            xneigh1=xnode[j]
+            yneigh1=ynode[j]
+        if math.sqrt((xnode[j]-xnode[int(node2[i])])**2+(ynode[j]-ynode[int(node2[i])])**2)<rcut:
+            xneigh2=xnode[j]
+            yneigh2=ynode[j]
+        if math.sqrt((xnode[j]-xnode[int(node3[i])])**2+(ynode[j]-ynode[int(node3[i])])**2)<rcut:
+            xneigh3=xnode[j]
+            yneigh3=ynode[j]
+        if math.sqrt((xnode[j]-xnode[int(node4[i])])**2+(ynode[j]-ynode[int(node4[i])])**2)<rcut:
+            xneigh4=xnode[j]
+            yneigh4=ynode[j] 
