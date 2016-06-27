@@ -41,14 +41,17 @@ for i in range(numelem):
             yneigh4=ynode[j] 
             
             
-            import math
+ 
+import math
 import numpy as np
+from decimal import *
 n=0
+pi=3.14159
 rcut=input('r_cut')
 eps=input('epsilon')
 sigma=input('sigma')
-
-nodes=np.genfromtxt('coordinate.txt', delimiter=' ', names=True)
+getcontext().prec =10
+nodes=Decimal(np.genfromtxt('dump.coords.txt', delimiter=' ', names=True))
 xcord=nodes['x']
 ycord=nodes['y']
 zcord=nodes['z']
@@ -70,38 +73,71 @@ node2=elements['Node2']
 node3=elements['Node3']
 node4=elements['Node4']
 numelem=len(elements['Node1'])
-
-
+h=(xnode[int(node1[1]-1)]-xnode[int(node1[2]-1)])/2
+print(h)
 
 for i in range(numelem):
-    numneigh1=0
-    numneigh2=0
-    numneigh3=0
-    numneigh4=0
+    numneigh1=1
+    numneigh2=1
+    numneigh3=1
+    numneigh4=1
     E1=0
-   # E1.append(0)
+    E2=0
+    E3=0
+    E4=0
+    #E1.append(0)
+    r1=[]
+    r2=[]
+    r3=[]
+    r4=[]
+    a=0
+   
     for j in range(numnodes):
-        
-        r=float(math.sqrt((xnode[j]-xnode[int(node1[i])-1])**2+(ynode[j]-ynode[int(node1[i])-1])**2))
-        if r<rcut and r>0:
+        r1.append(0)
+        r1[j]=math.sqrt((xnode[j]-xnode[int(node1[i])-1])**2+(ynode[j]-ynode[int(node1[i])-1])**2)
+        if r1[j]<rcut and r1[j]>0:
+            a=(sigma/r1[j])
+            E1=E1+4*eps*(a**6-a**12)
             xneigh1=xnode[j]
             yneigh1=ynode[j]
             numneigh1=numneigh1+1
-            E1=E1+4*eps*[(sigma/r)**6-(sigma/r)**12]
-        if math.sqrt((xnode[j]-xnode[int(node2[i])-1])**2+(ynode[j]-ynode[int(node2[i])-1])**2)<rcut:
+        r2.append(0)
+        r2[j]=math.sqrt((xnode[j]-xnode[int(node2[i])-1])**2+(ynode[j]-ynode[int(node2[i])-1])**2)
+        if r2[j]<rcut and r2[j]>0:
+            a=(sigma/r2[j])
+            E2=E2+4*eps*(a**6-a**12)
             xneigh2=xnode[j]
             yneigh2=ynode[j]
             numneigh2=numneigh2+1
-        if math.sqrt((xnode[j]-xnode[int(node3[i])-1])**2+(ynode[j]-ynode[int(node3[i])-1])**2)<rcut:
+        r3.append(0)
+        r3[j]=math.sqrt((xnode[j]-xnode[int(node3[i])-1])**2+(ynode[j]-ynode[int(node3[i])-1])**2)
+        if r3[j]<rcut and r3[j]>0:
+            a=(sigma/r3[j])
+            E3=E3+4*eps*(a**6-a**12)
             xneigh3=xnode[j]
             yneigh3=ynode[j]
             numneigh3=numneigh3+1
-        if math.sqrt((xnode[j]-xnode[int(node4[i])-1])**2+(ynode[j]-ynode[int(node4[i])-1])**2)<rcut:
+        r4.append(0)
+        r4[j]=math.sqrt((xnode[j]-xnode[int(node4[i])-1])**2+(ynode[j]-ynode[int(node4[i])-1])**2)
+        if r4[j]<rcut and r4[j]>0:
+            a=(sigma/r4[j])
+            E4=E4+4*eps*(a**6-a**12)
             xneigh4=xnode[j]
             yneigh4=ynode[j] 
             numneigh4=numneigh4+1
-
-    print(E1) 
+    #print(E1)
+    #print(numneigh1,numneigh2,numneigh3,numneigh4)
+    #print(E1/numneigh1)
+    E_extended=E1*(h**2+1)/(numneigh1)+E2*(h**2+1)/(numneigh2)+E3*(h**2+1)/(numneigh3)+E4*(h**2+1)/(numneigh4)
+    #E_extended=(E1/numneigh1)*0.85*((h/rcut)**2)*numneigh1+(E2/numneigh2)*0.85*((h/rcut)**2)*numneigh2+(E3/numneigh3)*0.85*((h/rcut)**2)*numneigh3+(E4/numneigh4)*0.85*((h/rcut)**2)*numneigh4
+    E_total=4/pi*E_extended
+    #print('Total potential energy of nodes of elements:')
+    print(E_extended)
+    print(E_total) 
     #print(numneigh1,numneigh2,numneigh3,numneigh4)      
-    print(numneigh1)       
+    #h: radius of extended area
+    #number of atoms in extended=(h**2/rcut**2)**number of atoms in cluster "number of neighbors for each node"
+    #Energy of he not includede area : scale (4-pi/pi)
+    #total energy of each element=4/pi**E_extended     
+        
 
