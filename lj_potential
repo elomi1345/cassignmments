@@ -39,3 +39,69 @@ for i in range(numelem):
         if math.sqrt((xnode[j]-xnode[int(node4[i])])**2+(ynode[j]-ynode[int(node4[i])])**2)<rcut:
             xneigh4=xnode[j]
             yneigh4=ynode[j] 
+            
+            
+            import math
+import numpy as np
+n=0
+rcut=input('r_cut')
+eps=input('epsilon')
+sigma=input('sigma')
+
+nodes=np.genfromtxt('coordinate.txt', delimiter=' ', names=True)
+xcord=nodes['x']
+ycord=nodes['y']
+zcord=nodes['z']
+numnodes=len(xcord)
+xnode=[]#create an empty list first
+ynode=[]#create an empty list first
+znode=[]
+for i in range(numnodes):
+        xnode.append([0]*numnodes)#And again append empty lists to original list
+        ynode.append(0)
+        znode.append(0)
+        xnode[n]=xcord[i]    
+        ynode[n]=ycord[i]
+        znode[n]=zcord[i]
+        n=n+1
+elements=np.genfromtxt('elements.txt', delimiter=' ', names=True)
+node1=elements['Node1']
+node2=elements['Node2']
+node3=elements['Node3']
+node4=elements['Node4']
+numelem=len(elements['Node1'])
+
+
+
+for i in range(numelem):
+    numneigh1=0
+    numneigh2=0
+    numneigh3=0
+    numneigh4=0
+    E1=0
+   # E1.append(0)
+    for j in range(numnodes):
+        
+        r=float(math.sqrt((xnode[j]-xnode[int(node1[i])-1])**2+(ynode[j]-ynode[int(node1[i])-1])**2))
+        if r<rcut and r>0:
+            xneigh1=xnode[j]
+            yneigh1=ynode[j]
+            numneigh1=numneigh1+1
+            E1=E1+4*eps*[(sigma/r)**6-(sigma/r)**12]
+        if math.sqrt((xnode[j]-xnode[int(node2[i])-1])**2+(ynode[j]-ynode[int(node2[i])-1])**2)<rcut:
+            xneigh2=xnode[j]
+            yneigh2=ynode[j]
+            numneigh2=numneigh2+1
+        if math.sqrt((xnode[j]-xnode[int(node3[i])-1])**2+(ynode[j]-ynode[int(node3[i])-1])**2)<rcut:
+            xneigh3=xnode[j]
+            yneigh3=ynode[j]
+            numneigh3=numneigh3+1
+        if math.sqrt((xnode[j]-xnode[int(node4[i])-1])**2+(ynode[j]-ynode[int(node4[i])-1])**2)<rcut:
+            xneigh4=xnode[j]
+            yneigh4=ynode[j] 
+            numneigh4=numneigh4+1
+
+    print(E1) 
+    #print(numneigh1,numneigh2,numneigh3,numneigh4)      
+    print(numneigh1)       
+
