@@ -1,0 +1,85 @@
+import sys,random,math
+#set parameters
+nloop=1000
+rate=0.0
+# parse command line
+
+argv = sys.argv
+if len(argv) != 2:
+  print "Syntax: mc.py in.mc"
+  sys.exit()
+
+infile = sys.argv[1]
+
+from lammps import lammps
+lmp = lammps()
+
+# run infile one line at a time
+# just sets up MC problem
+
+lines = open(infile,'r').readlines()
+for line in lines: lmp.command(line)
+lmp.command("dimension 2")
+lmp.command("boundary f f p")
+lmp.command("atom_style	atomic")
+lmp.command("neighbor 0.3 bin")
+lmp.command("neigh_modify delay 5")
+
+# create geometry
+
+lmp.command("lattice hex 0.93")
+lmp.command("region box block 0 40 0 40 -0.25 0.25")
+lmp.command("create_box	5 box")
+lmp.command("create_atoms 1 box")
+
+lmp.command("mass 1 1.0")
+lmp.command("mass 2 1.0")
+lmp.command("mass 3 1.0")
+lmp.command("mass 4 1.0")
+lmp.command("mass 5 1.0")
+
+# LJ potentials
+
+lmp.command("pair_style	lj/cut 2.5")
+lmp.command("pair_coeff	* * 1.0 1.0 2.5")
+
+# define groups
+
+lmp.command("region 1 block INF INF INF 4.25 INF INF")
+lmp.command("group lower region 1 ")
+lmp.command("region 2 block INF INF 35.75 INF INF INF")
+lmp.command("group upper region 2")
+lmp.command("group boundary union lower upper ")
+lmp.command("group mobile subtract all lower ")
+lmp.command("region leftupper block INF 5 20 INF INF INF ")
+lmp.command("region leftlower block INF 5 INF 20 INF INF ")
+lmp.command("group leftupper region leftupper ")
+lmp.command("group leftlower region leftlower ")
+lmp.command("set group leftupper type 2 ")
+lmp.command("set group leftlower type 3 ")
+lmp.command("set group lower type 4 ")
+lmp.command("set group upper type 5 ")
+#fix
+lmp.command("neigh_modify exclude type 2 3")
+lmp.command("fix 1 lower setforce NULL 0.0 0.0")
+lmp.command("dump 1 all atom 1 dump.crackMS2")
+lmp.command("dump 2 all custom 100 dump.coords id x y z ")
+# displacement and minimization
+lmp.command("thermo 1000")
+lmp.command("thermo_style custom step temp pe fnorm etotal press vol")
+
+
+for i in range(nloop):
+  lmp.command("fix 3 mobile deform 1 y erate 0.00001 units box remap x")
+  lmp.command("min_style fire")
+  lmp.command("minimize 0.0 1e-4 30000 100000")
+  lmp.command("run 0")
+
+coordsX = lmp.extract_atom("x",3)  
+coordsY = lmp.extract_atom("y",3) 
+coordsY=lmp.extract_atom("z",3) 
+print "xcoord",coordsX
+ 
+
+
+
