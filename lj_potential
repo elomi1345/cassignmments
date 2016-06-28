@@ -42,22 +42,26 @@ for i in range(numelem):
             
             
  
+ 
 import math
 import numpy as np
 from decimal import *
 n=0
 pi=3.14159
+#check the axis and direcion of the applied force then scale the initial configuration. 
+#for example here we apply displacement to positive y and atoms will be scaled in y direction  
+strain=input('strain')
 rcut=input('r_cut')
 eps=input('epsilon')
 sigma=input('sigma')
 getcontext().prec =10
 nodes=Decimal(np.genfromtxt('dump.coords.txt', delimiter=' ', names=True))
 xcord=nodes['x']
-ycord=nodes['y']
+ycord=strain*nodes['y']
 zcord=nodes['z']
 numnodes=len(xcord)
 xnode=[]#create an empty list first
-ynode=[]#create an empty list first
+ynode=[]
 znode=[]
 for i in range(numnodes):
         xnode.append([0]*numnodes)#And again append empty lists to original list
@@ -125,19 +129,28 @@ for i in range(numelem):
             xneigh4=xnode[j]
             yneigh4=ynode[j] 
             numneigh4=numneigh4+1
-    #print(E1)
-    #print(numneigh1,numneigh2,numneigh3,numneigh4)
-    #print(E1/numneigh1)
     E_extended=E1*(h**2+1)/(numneigh1)+E2*(h**2+1)/(numneigh2)+E3*(h**2+1)/(numneigh3)+E4*(h**2+1)/(numneigh4)
-    #E_extended=(E1/numneigh1)*0.85*((h/rcut)**2)*numneigh1+(E2/numneigh2)*0.85*((h/rcut)**2)*numneigh2+(E3/numneigh3)*0.85*((h/rcut)**2)*numneigh3+(E4/numneigh4)*0.85*((h/rcut)**2)*numneigh4
     E_total=4/pi*E_extended
-    #print('Total potential energy of nodes of elements:')
+    
     print(E_extended)
+    print('E_total:')
     print(E_total) 
-    #print(numneigh1,numneigh2,numneigh3,numneigh4)      
+
+
+#MINIMZATION OF ENERGY : 
+
+
+
+
+
+
+
+    
     #h: radius of extended area
     #number of atoms in extended=(h**2/rcut**2)**number of atoms in cluster "number of neighbors for each node"
     #Energy of he not includede area : scale (4-pi/pi)
-    #total energy of each element=4/pi**E_extended     
-        
-
+    #total energy of each element=4/pi**E_extended
+#HOW TO APPLY DOSPLACEMENT TO ATOMS:    
+    #FULLY ATOMISTIC PART: instead of applying displacement only to the repatoms on the boundary, apply displacement to all of the atoms homogenously. It does not need any steps. x_i=F*X_i(using Cauchy born rule) in one step apply to all atoms. reason: if apply only to the boundary atoms becuz of the large displacement the bond between atoms will break and atom will go to infinty and lost. one solution can be applying the displacement to the node in very small steps. 
+#CONTINUUM PART: element have deformation gradient of F, and will assume that F will be apply to all atoms in the element and again x_i=F*X_i. 
+# if have two different kinds of atoms can not use the causchy born rule becuz for example atom type 1 have deformation F1 but atom type 2 with deformation F1 does not deform homogenously but it can be a good appproximation to know the equilibrium state and assume that atom type 2 will move in equilibrium state to be in interactions with other atoms of type 2 homogenoulsy.       
