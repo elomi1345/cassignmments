@@ -1,0 +1,58 @@
+import numpy as np
+import numpy
+
+n=0
+nodes=np.genfromtxt('node_output.txt',delimiter=",", names=True)
+xcord=nodes['x']
+ycord=nodes['y']
+numnodes=len(nodes)
+xnode=[]
+ynode=[]
+
+for i in range(numnodes):
+        xnode.append([0]*numnodes)
+        ynode.append(0)
+        xnode[n]=xcord[i]    
+        ynode[n]=ycord[i]
+        n=n+1
+
+elements=np.genfromtxt('element_output.txt', delimiter=",", names=True)
+node1=elements['Node1']
+node2=elements['Node2']
+node3=elements['Node3']
+numelem=len(elements['Node1'])
+xn=[]
+yn=[]
+for i in range(numelem):
+    for m in range(5):
+        xn.append(0)
+        yn.append(0)
+        xn[m]=m
+        yn[m]=m
+for i in range(numelem):
+    x1=xnode[int(node1[i])]
+    y1=ynode[int(node1[i])]
+    x2=xnode[int(node2[i])]
+    y2=ynode[int(node2[i])]
+    x3=xnode[int(node3[i])]
+    y3=ynode[int(node3[i])]
+    M=numpy.matrix([[1, x1, y1],[1, x2, y2],[1, x3, y3]])
+    #print(M)
+    #print(numpy.linalg.det(M))
+    A=(0.5)*numpy.linalg.det(M)
+    #print(A)
+
+#x_n & y_n array the atom's position in each element
+#u should find atoms position 
+    for j in range(5):
+            N1=1/(2*A)*((x2*y3-x3*y2)+(y2-y3)*xn[j]+(x3-x2)*yn[j])
+            N2=1/(2*A)*((x3*y1-x1*y3)+(y3-y1)*xn[j]+(x1-x3)*yn[j])
+            N3=1/(2*A)*((x1*y2-x2*y1)+(y1-y2)*xn[j]+(x2-x1)*yn[j])
+            N=numpy.matrix([[N1, 0, N2, 0, N3, 0],[0, N1, 0, N2, 0, N3]])
+            #xy=numpy.matrix([[0],[0]])
+            pnodes=numpy.matrix([[x1],[y1],[x2],[y2],[x3],[y3]])
+            xy=N*pnodes
+            print(xy)
+            xn[j]=xy[0][0]
+            #yn[j]=xy[1][0]
+            #print(xn)
