@@ -38,7 +38,6 @@ for i in range(numatoms):
         m=m+1
 
 
-
 for i in range(numelem):
     na=0
     #k=[]
@@ -49,39 +48,27 @@ for i in range(numelem):
     y2=ynode[int(node2[i])]
     x3=xnode[int(node3[i])]
     y3=ynode[int(node3[i])]
-    M=numpy.matrix([[1, x1, y1],[1, x2, y2],[1, x3, y3]])
-    #print(M)
-    #print(numpy.linalg.det(M))
-    A=(0.5)*numpy.linalg.det(M)
-    #print(A)
-    Area = 0.5*(-y2*x3 + y1*(-x2 + x3) + x1*(y2 - y3) + x2*y3)
-    #print("element:")
-    #print(i)
-    #print(Area)
+
     for j in range(numatoms):
-        s = 1/(2*Area)*(y1*x3 - x1*y3 + (y3 - y1)*xatom[j] + (x1 - x3)*yatom[j])
-        t = 1/(2*Area)*(x1*y2 - y1*x2 + (y1 - y2)*xatom[j] + (x2 - x1)*yatom[j])
-        st=1-s-t
-        for i in range(1):
-            print("j is:")
-            print(j)
-            print(s)
-            print(t)
-            print(st)
-        if s>0 and t>0 and st>0 :
-           k=j
-           na=na+1
-           #print(k)
-    #print("number of neighbor is:")
-    #print(na)
+        s =((y2 -y3)*(xatom[j] - x3) + (x3 - x2)*(yatom[j] - y3)) /((y2 - y3)*(x1 - x3) + (x3 -x2)*(y1 - y3))
+        t = ((y3 - y1)*(xatom[j] - x3) + (x1 - x3)*(yatom[j] - y3)) /((y2 - y3)*(x1 - x3) + (x3 - x2)*(y1 - y3))
+        st=1.0-s-t
+        if s>=0 and s<=1 and t>=0 and t<=1 and st>=0 and st<=1 :
+            na=na+1
+        elif s>0 and t>0 and st>0 :
+            na=na+1
+
+           
+    print("number of neighbor is:")
+    print(na)
 
 """
 #x_n & y_n array the atom's position in each element
 #u should find atoms position 
     for j in range(3):
-            N1=1/(2*A)*((x2*y3-x3*y2)+(y2-y3)*xn[j]+(x3-x2)*yn[j])
-            N2=1/(2*A)*((x3*y1-x1*y3)+(y3-y1)*xn[j]+(x1-x3)*yn[j])
-            N3=1/(2*A)*((x1*y2-x2*y1)+(y1-y2)*xn[j]+(x2-x1)*yn[j])
+            N1=1/(2*A)*((x2*y3-x3*y2)+(y2-y3)*xatom[j]+(x3-x2)*yatom[j])
+            N2=1/(2*A)*((x3*y1-x1*y3)+(y3-y1)*xatom[j]+(x1-x3)*yatom[j])
+            N3=1/(2*A)*((x1*y2-x2*y1)+(y1-y2)*xatom[j]+(x2-x1)*yatom[j])
             N=numpy.matrix([[N1, 0, N2, 0, N3, 0],[0, N1, 0, N2, 0, N3]])
             #xy=numpy.matrix([[0],[0]])
             pnodes=numpy.matrix([[x1],[y1],[x2],[y2],[x3],[y3]])
