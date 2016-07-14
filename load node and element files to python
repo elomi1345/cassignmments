@@ -1,6 +1,7 @@
 import numpy as np
 import numpy
-
+import math
+pi=3.14159
 n=0
 nodes=np.genfromtxt('node_output.txt',delimiter=",", names=True)
 xcord=nodes['x']
@@ -8,6 +9,9 @@ ycord=nodes['y']
 numnodes=len(nodes)
 xnode=[]
 ynode=[]
+rcut=4#input('r_cut')
+eps=1#input('epsilon')
+sigma=1#input('sigma')
 
 for i in range(numnodes):
         xnode.append([0]*numnodes)
@@ -37,30 +41,105 @@ for i in range(numatoms):
         yatom[m]=ya[i]
         m=m+1
 
-
+Eng_tot=0
 for i in range(numelem):
     na=0
     #k=[]
     #k.append(0)
+    numneigh1=1
+    numneigh2=1
+    numneigh3=1
+    E1=0
+    E2=0
+    E3=0
+    a=0
     x1=xnode[int(node1[i])]
     y1=ynode[int(node1[i])]
     x2=xnode[int(node2[i])]
     y2=ynode[int(node2[i])]
     x3=xnode[int(node3[i])]
     y3=ynode[int(node3[i])]
-
+    h=(xnode[int(node1[1]-1)]-xnode[int(node1[2]-1)])/2
+    M=numpy.matrix([[1, x1, y1],[1, x2, y2],[1, x3, y3]])
+    A=(0.5)*numpy.linalg.det(M)
+    area=((y2 - y3)*(x1 - x3) + (x3 -x2)*(y1 - y3))
     for j in range(numatoms):
-        s =((y2 -y3)*(xatom[j] - x3) + (x3 - x2)*(yatom[j] - y3)) /((y2 - y3)*(x1 - x3) + (x3 -x2)*(y1 - y3))
-        t = ((y3 - y1)*(xatom[j] - x3) + (x1 - x3)*(yatom[j] - y3)) /((y2 - y3)*(x1 - x3) + (x3 - x2)*(y1 - y3))
+        s =((y2 -y3)*(xatom[j] - x3) + (x3 - x2)*(yatom[j] - y3)) /area
+        t = ((y3 - y1)*(xatom[j] - x3) + (x1 - x3)*(yatom[j] - y3)) /area
         st=1.0-s-t
         if s>=0 and s<=1 and t>=0 and t<=1 and st>=0 and st<=1 :
             na=na+1
+            N1=1/(2*A)*((x2*y3-x3*y2)+(y2-y3)*xatom[j]+(x3-x2)*yatom[j])
+            N2=1/(2*A)*((x3*y1-x1*y3)+(y3-y1)*xatom[j]+(x1-x3)*yatom[j])
+            N3=1/(2*A)*((x1*y2-x2*y1)+(y1-y2)*xatom[j]+(x2-x1)*yatom[j])
+            pnodes=numpy.matrix([[x1],[y1],[x2],[y2],[x3],[y3]])
+            xy=N*pnodes
+            #r1.append(0)
+            r1=math.sqrt((xatom[j]-x1)**2+(yatom[j]-y1)**2)
+            if r1<rcut and r1>0:
+                a=(sigma/r1)
+                E1=E1+4*eps*(a**6-a**12)
+                xneigh1=xatom[j]
+                yneigh1=yatom[j]
+                numneigh1=numneigh1+1
+            #r2.append(0)
+            r2=math.sqrt((xatom[j]-x2)**2+(yatom[j]-y2)**2)
+            if r2<rcut and r2>0:
+                a=(sigma/r2)
+                E2=E2+4*eps*(a**6-a**12)
+                xneigh2=xatom[j]
+                yneigh2=yatom[j]
+                numneigh2=numneigh2+1
+            #r3.append(0)
+            r3=math.sqrt((xatom[j]-x3)**2+(yatom[j]-y3)**2)
+            if r3<rcut and r3>0:
+                a=(sigma/r3)
+                E3=E3+4*eps*(a**6-a**12)
+                xneigh3=xatom[j]
+                yneigh3=yatom[j]
+                numneigh3=numneigh3+1
         elif s>0 and t>0 and st>0 :
             na=na+1
+            #r1.append(0)
+            r1=math.sqrt((xatom[j]-x1)**2+(yatom[j]-y1)**2)
+            if r1<rcut and r1>0:
+                a=(sigma/r1)
+                E1=E1+4*eps*(a**6-a**12)
+                xneigh1=xatom[j]
+                yneigh1=yatom[j]
+                numneigh1=numneigh1+1
+            #r2.append(0)
+            r2=math.sqrt((xatom[j]-x2)**2+(yatom[j]-y2)**2)
+            if r2<rcut and r2>0:
+                a=(sigma/r2)
+                E2=E2+4*eps*(a**6-a**12)
+                xneigh2=xatom[j]
+                yneigh2=yatom[j]
+                numneigh2=numneigh2+1
+            #r3.append(0)
+            r3=math.sqrt((xatom[j]-x3)**2+(yatom[j]-y3)**2)
+            if r3<rcut and r3>0:
+                a=(sigma/r3)
+                E3=E3+4*eps*(a**6-a**12)
+                xneigh3=xatom[j]
+                yneigh3=yatom[j]
+                numneigh3=numneigh3+1
+            N1=1/(2*A)*((x2*y3-x3*y2)+(y2-y3)*xatom[j]+(x3-x2)*yatom[j])
+            N2=1/(2*A)*((x3*y1-x1*y3)+(y3-y1)*xatom[j]+(x1-x3)*yatom[j])
+            N3=1/(2*A)*((x1*y2-x2*y1)+(y1-y2)*xatom[j]+(x2-x1)*yatom[j])
+            pnodes=numpy.matrix([[x1],[y1],[x2],[y2],[x3],[y3]])
+            xy=N*pnodes
 
-           
-    print("number of neighbor is:")
-    print(na)
+    h12=math.sqrt((x1-x2)**2+(y1-y2)**2)
+    h23=math.sqrt((x2-x3)**2+(y2-y3)**2)
+    h13=math.sqrt((x1-x3)**2+(y3-y1)**2)
+    alpha1=math.acos(((h23**2)-(h12**2)-(h13**2))/(-2*h12*h13))
+    alpha2=math.acos(((h13**2)-(h23**2)-(h12**2))/(-2*h12*h23))
+    alpha3=math.acos(((h12**2)-(h13**2)-(h23**2))/(-2*h13*h23))
+    Eng_ele=(0.33)*area*(E1/numneigh1)*((2*pi)/(alpha1*pi*(rcut**2)))+(0.33)*area*(E2/numneigh2)*((2*pi)/(alpha2*pi*(rcut**2)))+(0.33)*area*(E3/numneigh3)*((2*pi)/(alpha3*pi*(rcut**2)))
+    Eng_tot=Eng_tot+Eng_ele
+print(Eng_tot)
+
 
 """
 #x_n & y_n array the atom's position in each element
@@ -78,4 +157,8 @@ for i in range(numelem):
             #yn[j]=xy[1][0]
             #print(xn)
 """
+
+
+
+
 
